@@ -48,6 +48,3 @@ public class UserService
         {
             // Log error with exception
             _logger.LogError(ex, "Failed to create user: {Name}", name);
-        }
-    }
-}
