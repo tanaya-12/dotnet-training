@@ -1,41 +1,64 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Linq;
+using Microsoft.EntityFrameworkCore.SqlServer;
+using System.ComponentModel.DataAnnotations.Schema;
 
-class Program
+var _context = new CrmDbContext();
+
+var customers = _context.Customers.ToList();
+
+foreach (var customer in customers)
 {
-    static void Main()
-    {
-        using var context = new CrmContext();
-        var customers = context.Customers.ToList();
-
-        foreach (var c in customers)
-            Console.WriteLine($"{c.CustomerId}: {c.CustomerName} - {c.Email}");
-    }
+    Console.WriteLine($"Customer ID: {customer.CustomerId}, Name: {customer.Name}, Email: {customer.Email}");
 }
 
-class CrmContext : DbContext
+class CrmDbContext : DbContext
 {
     public DbSet<Customer> Customers { get; set; }
+    public DbSet<Order> Orders { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseSqlServer(
-            "Server=localhost\\SQLEXPRESS;Database=CustomerManagementDB;Integrated Security=True;TrustServerCertificate=True"
-        );
+        optionsBuilder.UseSqlServer("Server=localhost;Database=CrmDb;User Id=sa;Password=p@ssw0rd;TrustServerCertificate=True");
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Customer>().ToTable("Customer");
+        modelBuilder.Entity<CustomerType>()
+            .HasData(
+                new CustomerType { Id = 1, TypeName = "Regular" },
+                new CustomerType { Id = 2, TypeName = "Premium" }
+            );
+
+        modelBuilder.Entity<Order>()
+            .HasKey(o => o.OrderId);
+
+        modelBuilder.Entity<Order>()
+            .HasOne(o => o.Customer)
+            .WithMany()
+            .HasForeignKey(o => o.CustomerId);
     }
 }
 
-class Customer
+public class Customer
 {
     public int CustomerId { get; set; }
-    public string CustomerName { get; set; }
+    public string Name { get; set; }
     public string Email { get; set; }
-    public string Phone { get; set; }
-    public bool IsDeleted { get; set; }
+}
+
+public class CustomerType
+{
+    public int Id { get; set; }
+    public string TypeName { get; set; }
+}
+
+public class Order
+{
+    public int OrderId { get; set; }
+    public DateTime OrderDate { get; set; }
+    public decimal TotalAmount { get; set; }
+
+    [ForeignKey("Customer")]
+    public int CustomerId { get; set; }
+    public Customer Customer { get; set; }
 }
