@@ -1,0 +1,15 @@
+@SecurityJWTDemo_HostAddress = http://localhost:5000
+
+GET {{SecurityJWTDemo_HostAddress}}/api/v1/customer
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzYXJhaCIsImp0aSI6Ijg1ZTU0MGI0LTg4Y2MtNGZhNC1iZDg2LTQ0YjEyMWI5NDIwMSIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluIiwiY3VzdG9tX2NsYWltIjoiY3VzdG9tX3ZhbHVlIiwiZXhwIjoxNzcyNzc1ODE1LCJpc3MiOiJyZXZhdHVyZSIsImF1ZCI6ImRvdG5ldC1iYXRjaC0yMDI2In0.NarP5M-gj6ENZv1bbic8YZydtM1aMqnTgvWlKQePilk
+###
+
+#
+POST {{SecurityJWTDemo_HostAddress}}/api/v1/auth/login
+Content-Type: application/json
+
+{
+  "username": "sarah",
+  "password": "s@123"
+}
